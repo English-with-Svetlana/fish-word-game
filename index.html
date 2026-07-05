@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Fish Word Game</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+#game-container { width: 100%; height: 100%; position: relative; overflow: hidden; background: transparent; }
+.fish { width: 140px; height: 140px; position: absolute; cursor: pointer; transition: transform 0.1s; z-index: 1; }
+.fish:hover { transform: scale(1.1); }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
+.modal-overlay.active { display: flex; }
+.modal-box { position: relative; width: 500px; height: 400px; background: url('https://i.ibb.co/C372spnj/image.png') no-repeat center center; background-size: contain; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.letter-container { position: relative; width: 300px; height: 100px; margin: 0 auto 10px; }
+.letter { position: absolute; font-size: 30px; font-weight: bold; color: #2c3e50; cursor: pointer; user-select: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+.input-area { position: relative; width: 300px; height: 50px; display: flex; align-items: center; justify-content: center; }
+.word-input { width: 260px; padding: 8px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 248, 220, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; position: absolute; }
+.word-input.success { background: rgba(46, 204, 113, 0.7); border-color: #27ae60; }
+.word-input.error { background: rgba(231, 76, 60, 0.7); border-color: #c0392b; }
+.check-btn { position: absolute; bottom: -50px; padding: 8px 25px; font-size: 18px; background: linear-gradient(135deg, #d35400, #e67e22); color: white; border: none; border-radius: 20px; cursor: pointer; font-family: Georgia, serif; font-weight: bold; }
+.correct-word { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: bold; color: #27ae60; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; pointer-events: none; }
+.final-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #d35400; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; animation: finalPulse 2s infinite; }
+@keyframes finalPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
+.firework { position: fixed; pointer-events: none; z-index: 2000; }
+.firework-particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; animation: fireworkBurst 1s ease-out forwards; }
+@keyframes fireworkBurst { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="game-container"></div>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box">
+    <div class="letter-container" id="letter-container"></div>
+    <div class="input-area">
+      <input type="text" class="word-input" id="word-input" placeholder="Write the word..." autocomplete="off">
+      <button class="check-btn" id="check-btn">Check</button>
+    </div>
+  </div>
+</div>
+<script>
+if (window.__fishGameStarted) {
+  if (window.__fishAnimFrame) cancelAnimationFrame(window.__fishAnimFrame);
+  document.getElementById("game-container").innerHTML = "";
+  fishElements = [];
+}
+window.__fishGameStarted = true;
+
+const words = ["ancient man", "gangster", "witch", "knight", "ghost", "amulet", "potion", "torch", "hang out", "terrify"];
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playBubbleSound() {
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + 0.2);
+}
+
+function playClickSound() {
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + 0.15);
+}
+
+function playCorrectSound() {
+  initAudio();
+  const notes = [523, 659, 784, 1047];
+  notes.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.1);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime + i * 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.3);
+    osc.start(audioCtx.currentTime + i * 0.1);
+    osc.stop(audioCtx.currentTime + i * 0.1 + 0.3);
+  });
+}
+
+function playWrongSound() {
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = "sawtooth";
+  osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + 0.3);
+}
+
+function playVictorySound() {
+  initAudio();
+  const melody = [523, 587, 659, 784, 880, 1047];
+  melody.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+    gain.gain.setValueAtTime(0.06, audioCtx.currentTime + i * 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.4);
+    osc.start(audioCtx.currentTime + i * 0.15);
+    osc.stop(audioCtx.currentTime + i * 0.15 + 0.4);
+  });
+}
+
+function createFirework(x, y, count = 20) {
+  const fw = document.createElement("div");
+  fw.className = "firework";
+  fw.style.left = x + "px";
+  fw.style.top = y + "px";
+  const colors = ["#d4af37", "#ffd700", "#ff69b4", "#9b59b6", "#e74c3c", "#3498db", "#2ecc71", "#d35400"];
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    const angle = (Math.PI * 2 / count) * i;
+    const dist = 40 + Math.random() * 60;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist;
+    p.className = "firework-particle";
+    p.style.setProperty("--tx", tx + "px");
+    p.style.setProperty("--ty", ty + "px");
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.left = "0px";
+    p.style.top = "0px";
+    fw.appendChild(p);
+  }
+  document.body.appendChild(fw);
+  setTimeout(() => fw.remove(), 1000);
+}
+
+function shuffleArray(array) {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+function placeLettersInGrid(letters) {
+  const positions = [];
+  const containerWidth = 300;
+  const containerHeight = 100;
+  const cols = Math.ceil(Math.sqrt(letters.length));
+  const rows = Math.ceil(letters.length / cols);
+  const cellWidth = containerWidth / cols;
+  const cellHeight = containerHeight / rows;
+  const startX = (containerWidth - (cols * cellWidth)) / 2;
+  const startY = (containerHeight - (rows * cellHeight)) / 2 + 10;
+  
+  letters.forEach((letter, index) => {
+    const row = Math.floor(index / cols);
+    const col = index % cols;
+    const x = startX + col * cellWidth + cellWidth/2 - 15 + (Math.random() * 10 - 5);
+    const y = startY + row * cellHeight + cellHeight/2 - 15 + (Math.random() * 10 - 5);
+    positions.push({ x: Math.max(5, Math.min(x, containerWidth - 35)), y: Math.max(5, Math.min(y, containerHeight - 35)) });
+  });
+  
+  return positions;
+}
+
+let fishElements = [];
+let currentFishIndex = -1;
+let fishRemaining = 10;
+let attempts = 0;
+let currentWord = "";
+let isModalOpen = false;
+let gameFinished = false;
+const container = document.getElementById("game-container");
+
+function createFish() {
+  for (let i = 0; i < 10; i++) {
+    const fish = document.createElement("img");
+    fish.src = "https://i.ibb.co/LdPkRr0s/image.png";
+    fish.className = "fish";
+    fish.dataset.index = i;
+    const maxX = window.innerWidth - 140;
+    const maxY = window.innerHeight - 140;
+    let x = Math.random() * maxX;
+    let y = Math.random() * maxY;
+    fish.style.left = x + "px";
+    fish.style.top = y + "px";
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.1 + Math.random() * 0.2;
+    fish.dataset.vx = Math.cos(angle) * speed;
+    fish.dataset.vy = Math.sin(angle) * speed;
+    fish.dataset.x = x;
+    fish.dataset.y = y;
+    
+    fish.addEventListener("click", function(e) {
+      e.stopPropagation();
+      if (isModalOpen || this.style.display === "none" || gameFinished) return;
+      initAudio();
+      const idx = parseInt(this.dataset.index);
+      currentFishIndex = idx;
+      attempts = 0;
+      isModalOpen = true;
+      playBubbleSound();
+      setTimeout(() => showModal(idx), 100);
+    });
+    
+    container.appendChild(fish);
+    fishElements.push(fish);
+  }
+}
+
+function animateFish() {
+  const maxX = window.innerWidth - 140;
+  const maxY = window.innerHeight - 140;
+  fishElements.forEach(fish => {
+    if (fish.style.display === "none") return;
+    let x = parseFloat(fish.dataset.x);
+    let y = parseFloat(fish.dataset.y);
+    let vx = parseFloat(fish.dataset.vx);
+    let vy = parseFloat(fish.dataset.vy);
+    if (Math.random() < 0.02) {
+      vx += (Math.random() - 0.5) * 0.3;
+      vy += (Math.random() - 0.5) * 0.3;
+      const speed = Math.sqrt(vx * vx + vy * vy);
+      if (speed > 0.5) { vx = (vx / speed) * 0.5; vy = (vy / speed) * 0.5; }
+      if (speed < 0.05) { vx = (vx / speed) * 0.1; vy = (vy / speed) * 0.1; }
+    }
+    x += vx;
+    y += vy;
+    if (x <= 0) { x = 0; vx = Math.abs(vx); }
+    if (x >= maxX) { x = maxX; vx = -Math.abs(vx); }
+    if (y <= 0) { y = 0; vy = Math.abs(vy); }
+    if (y >= maxY) { y = maxY; vy = -Math.abs(vy); }
+    fish.dataset.x = x;
+    fish.dataset.y = y;
+    fish.dataset.vx = vx;
+    fish.dataset.vy = vy;
+    fish.style.left = x + "px";
+    fish.style.top = y + "px";
+    if (vx < 0) { fish.style.transform = "scaleX(-1)"; }
+    else { fish.style.transform = "scaleX(1)"; }
+  });
+  window.__fishAnimFrame = requestAnimationFrame(animateFish);
+}
+
+function showModal(index) {
+  currentWord = words[index];
+  const overlay = document.getElementById("modal-overlay");
+  const letterContainer = document.getElementById("letter-container");
+  const wordInput = document.getElementById("word-input");
+  const checkBtn = document.getElementById("check-btn");
+  
+  letterContainer.innerHTML = "";
+  wordInput.value = "";
+  wordInput.classList.remove("success", "error");
+  wordInput.style.display = "block";
+  checkBtn.style.display = "block";
+  
+  const letters = currentWord.split("");
+  const shuffledLetters = shuffleArray(letters);
+  const positions = placeLettersInGrid(shuffledLetters);
+  
+  shuffledLetters.forEach((letter, i) => {
+    const letterEl = document.createElement("div");
+    letterEl.className = "letter";
+    letterEl.textContent = letter === " " ? "_" : letter;
+    letterEl.style.left = positions[i].x + "px";
+    letterEl.style.top = positions[i].y + "px";
+    letterContainer.appendChild(letterEl);
+  });
+  
+  overlay.classList.add("active");
+  setTimeout(() => wordInput.focus(), 100);
+}
+
+function checkWord() {
+  const wordInput = document.getElementById("word-input");
+  const modalBox = document.getElementById("modal-box");
+  const userAnswer = wordInput.value.toLowerCase().trim();
+  const correctAnswer = currentWord.toLowerCase();
+  
+  playClickSound();
+  attempts++;
+  
+  if (userAnswer === correctAnswer) {
+    playCorrectSound();
+    wordInput.classList.add("success");
+    wordInput.classList.remove("error");
+    setTimeout(() => {
+      closeModal(true);
+    }, 800);
+  } else {
+    playWrongSound();
+    wordInput.classList.add("error");
+    wordInput.classList.remove("success");
+    setTimeout(() => {
+      wordInput.classList.remove("error");
+    }, 500);
+    
+    if (attempts >= 3) {
+      const letterContainer = document.getElementById("letter-container");
+      letterContainer.innerHTML = "";
+      wordInput.style.display = "none";
+      document.getElementById("check-btn").style.display = "none";
+      
+      const correctWordEl = document.createElement("div");
+      correctWordEl.className = "correct-word";
+      correctWordEl.textContent = currentWord;
+      correctWordEl.style.top = "50%";
+      correctWordEl.style.left = "50%";
+      modalBox.appendChild(correctWordEl);
+      
+      setTimeout(() => {
+        if (modalBox.contains(correctWordEl)) {
+          modalBox.removeChild(correctWordEl);
+        }
+        closeModal(false);
+      }, 2500);
+    } else {
+      wordInput.value = "";
+      setTimeout(() => wordInput.focus(), 100);
+    }
+  }
+}
+
+function closeModal(success) {
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.remove("active");
+  isModalOpen = false;
+  
+  if (currentFishIndex !== -1) {
+    const fish = fishElements[currentFishIndex];
+    fish.style.display = "none";
+    fishRemaining--;
+  }
+  currentFishIndex = -1;
+  
+  if (fishRemaining <= 0 && !gameFinished) {
+    gameFinished = true;
+    setTimeout(() => showFinalScreen(), 500);
+  }
+}
+
+function showFinalScreen() {
+  const overlay = document.getElementById("modal-overlay");
+  const modalBox = document.getElementById("modal-box");
+  const letterContainer = document.getElementById("letter-container");
+  const wordInput = document.getElementById("word-input");
+  const checkBtn = document.getElementById("check-btn");
+  
+  letterContainer.innerHTML = "";
+  wordInput.style.display = "none";
+  checkBtn.style.display = "none";
+  
+  const finalText = document.createElement("div");
+  finalText.className = "final-text";
+  finalText.textContent = "Well done! You've caught a lot fish!";
+  modalBox.appendChild(finalText);
+  
+  playVictorySound();
+  
+  let count = 0;
+  const interval = setInterval(() => {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    createFirework(x, y, 25);
+    count++;
+    if (count > 20) clearInterval(interval);
+  }, 300);
+  
+  overlay.classList.add("active");
+}
+
+document.getElementById("check-btn").addEventListener("click", checkWord);
+document.getElementById("word-input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    checkWord();
+  }
+});
+
+createFish();
+animateFish();
+</script>
+</body>
+</html>
