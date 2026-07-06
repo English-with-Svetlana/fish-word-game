@@ -16,30 +16,28 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
 
-/* Рамка как контейнер */
 .modal-box { 
   position: relative; 
   width: 500px; 
-  height: 400px; 
+  height: 350px; 
 }
 
-/* Картинка рамки */
 .frame-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: contain;
   z-index: 1;
 }
 
-/* Рабочая область */
 .content-area {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 60px;
   right: 60px;
-  bottom: 60px;
+  bottom: 50px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -49,14 +47,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 
 .letter-container { 
   width: 100%;
-  height: 140px;
+  height: 130px;
   display: flex; 
   align-items: center; 
   justify-content: center; 
 }
 .word-image { 
   max-width: 260px; 
-  max-height: 140px; 
+  max-height: 130px; 
   object-fit: contain; 
 }
 
