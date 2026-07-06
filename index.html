@@ -15,14 +15,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 .fish:hover { transform: scale(1.1); }
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
-.modal-box { position: relative; width: 500px; height: 400px; background: url('https://i.ibb.co/C372spnj/image.png') no-repeat center center; background-size: contain; }
-.letter-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 360px; height: 180px; display: flex; align-items: center; justify-content: center; }
-.word-image { max-width: 100%; max-height: 100%; object-fit: contain; }
-.word-input { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); width: 320px; padding: 10px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 255, 255, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; }
-.word-input::placeholder { color: transparent; }
+.modal-box { position: relative; width: 500px; height: 400px; background: url('https://i.ibb.co/C372spnj/image.png') no-repeat center center; background-size: contain; overflow: visible; }
+.letter-container { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 280px; height: 130px; display: flex; align-items: center; justify-content: center; }
+.word-image { max-width: 280px; max-height: 130px; object-fit: contain; }
+.word-input { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 280px; padding: 10px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 255, 255, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; }
 .word-input.success { background: rgba(46, 204, 113, 0.7); border-color: #27ae60; }
 .word-input.error { background: rgba(231, 76, 60, 0.7); border-color: #c0392b; }
-.check-btn { position: absolute; bottom: -55px; left: 50%; transform: translateX(-50%); cursor: pointer; width: 100px; height: auto; transition: transform 0.2s; }
+.check-btn { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); cursor: pointer; width: 100px; height: auto; transition: transform 0.2s; }
 .check-btn:hover { transform: translateX(-50%) scale(1.1); }
 .correct-word { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: bold; color: #27ae60; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; pointer-events: none; }
 .final-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #d35400; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; animation: finalPulse 2s infinite; }
