@@ -11,7 +11,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 #game-container { width: 100%; height: 100%; position: relative; overflow: hidden; background: transparent; }
-.fish { width: 140px; height: 140px; position: absolute; cursor: pointer; transition: transform 0.1s; z-index: 1; }
+.fish { width: 180px; height: 120px; position: absolute; cursor: pointer; transition: transform 0.1s; z-index: 1; }
 .fish:hover { transform: scale(1.1); }
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
@@ -204,14 +204,18 @@ let isModalOpen = false;
 let gameFinished = false;
 const container = document.getElementById("game-container");
 
+// ✅ ПРЯМОУГОЛЬНЫЙ РАЗМЕР РЫБЫ: 180x120
+const FISH_WIDTH = 180;
+const FISH_HEIGHT = 120;
+
 function createFish() {
   for (let i = 0; i < 10; i++) {
     const fish = document.createElement("img");
     fish.src = "https://i.ibb.co/LdPkRr0s/image.png";
     fish.className = "fish";
     fish.dataset.index = i;
-    const maxX = window.innerWidth - 140;
-    const maxY = window.innerHeight - 140;
+    const maxX = window.innerWidth - FISH_WIDTH;
+    const maxY = window.innerHeight - FISH_HEIGHT;
     let x = Math.random() * maxX;
     let y = Math.random() * maxY;
     fish.style.left = x + "px";
@@ -241,8 +245,8 @@ function createFish() {
 }
 
 function animateFish() {
-  const maxX = window.innerWidth - 140;
-  const maxY = window.innerHeight - 140;
+  const maxX = window.innerWidth - FISH_WIDTH;
+  const maxY = window.innerHeight - FISH_HEIGHT;
   fishElements.forEach(fish => {
     if (fish.style.display === "none") return;
     let x = parseFloat(fish.dataset.x);
