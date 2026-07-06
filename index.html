@@ -111,14 +111,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
   top: 50%; 
   left: 50%; 
   transform: translate(-50%, -50%); 
-  font-size: 32px; 
+  font-size: 28px; 
   font-weight: bold; 
   color: #d35400; 
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
   text-align: center; 
   z-index: 10; 
   animation: finalPulse 2s infinite; 
-  padding: 0 20px;
+  padding: 0 40px;
+  line-height: 1.4;
 }
 @keyframes finalPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
 .firework { position: fixed; pointer-events: none; z-index: 2000; }
@@ -467,14 +468,11 @@ function showFinalScreen() {
   
   playVictorySound();
   
-  let count = 0;
-  const interval = setInterval(() => {
-    const x = Math.random() * window.innerWidth;
-    const y = Math.random() * window.innerHeight;
-    createFirework(x, y, 25);
-    count++;
-    if (count > 20) clearInterval(interval);
-  }, 300);
+  setInterval(() => {
+  const x = Math.random() * window.innerWidth;
+  const y = Math.random() * window.innerHeight;
+  createFirework(x, y, 25);
+}, 400);
   
   overlay.classList.add("active");
 }
