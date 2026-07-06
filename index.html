@@ -16,13 +16,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
 .modal-box { position: relative; width: 500px; height: 400px; background: url('https://i.ibb.co/C372spnj/image.png') no-repeat center center; background-size: contain; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.letter-container { position: relative; width: 320px; height: 140px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+.letter-container { position: relative; width: 320px; height: 140px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
 .word-image { max-width: 100%; max-height: 100%; object-fit: contain; }
-.input-area { position: relative; width: 300px; height: 50px; display: flex; align-items: center; justify-content: center; }
-.word-input { width: 260px; padding: 8px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 248, 220, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; position: absolute; }
+.word-input { width: 260px; padding: 8px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 248, 220, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); }
 .word-input.success { background: rgba(46, 204, 113, 0.7); border-color: #27ae60; }
 .word-input.error { background: rgba(231, 76, 60, 0.7); border-color: #c0392b; }
-.check-btn { position: absolute; bottom: -55px; cursor: pointer; width: 120px; height: auto; transition: transform 0.2s; }
+.check-btn { position: absolute; bottom: 40px; right: 40px; cursor: pointer; width: 100px; height: auto; transition: transform 0.2s; }
 .check-btn:hover { transform: scale(1.1); }
 .correct-word { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: bold; color: #27ae60; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; pointer-events: none; }
 .final-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #d35400; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; animation: finalPulse 2s infinite; }
@@ -37,10 +36,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal-box" id="modal-box">
     <div class="letter-container" id="letter-container"></div>
-    <div class="input-area">
-      <input type="text" class="word-input" id="word-input" placeholder="Write the word..." autocomplete="off">
-      <img src="https://i.ibb.co/8gDS5Xdv/image.png" class="check-btn" id="check-btn" alt="Check">
-    </div>
+    <input type="text" class="word-input" id="word-input" placeholder="Write the word..." autocomplete="off">
+    <img src="https://i.ibb.co/8gDS5Xdv/image.png" class="check-btn" id="check-btn" alt="Check">
   </div>
 </div>
 <script>
@@ -53,7 +50,6 @@ window.__fishGameStarted = true;
 
 const words = ["ancient man", "witch", "gangster", "knight", "ghost", "terrify", "amulet", "torch", "hang out", "potion"];
 
-// ✅ КАРТИНКИ-РЫБКИ С БУКВАМИ ДЛЯ КАЖДОГО СЛОВА
 const wordImages = {
   "ancient man": "https://i.ibb.co/pjBf3CZf/1.png",
   "witch": "https://i.ibb.co/5XqNGKj0/2.png",
@@ -275,7 +271,6 @@ function showModal(index) {
   wordInput.style.display = "block";
   checkBtn.style.display = "block";
   
-  // ✅ ПОКАЗЫВАЕМ КАРТИНКУ-РЫБКУ С БУКВАМИ
   const wordImg = document.createElement("img");
   wordImg.className = "word-image";
   wordImg.src = wordImages[currentWord];
