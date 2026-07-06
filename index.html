@@ -16,15 +16,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
 
-/* Рамка как настоящий элемент */
+/* Рамка как контейнер */
 .modal-box { 
   position: relative; 
   width: 500px; 
   height: 400px; 
-  overflow: hidden;
 }
 
-/* Сама рамка-картинка */
+/* Картинка рамки */
 .frame-image {
   position: absolute;
   top: 0;
@@ -34,13 +33,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
   z-index: 1;
 }
 
-/* Рабочая область ВНУТРИ рамки */
+/* Рабочая область */
 .content-area {
   position: absolute;
-  top: 60px;
-  left: 70px;
-  right: 70px;
-  bottom: 70px;
+  top: 50px;
+  left: 60px;
+  right: 60px;
+  bottom: 60px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -132,18 +131,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 <div id="game-container"></div>
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal-box" id="modal-box">
-    <!-- Рамка как отдельная картинка -->
     <img src="https://i.ibb.co/C372spnj/image.png" class="frame-image" alt="frame">
-    
-    <!-- Рабочая область внутри рамки -->
     <div class="content-area" id="content-area">
       <div class="letter-container" id="letter-container"></div>
       <div class="word-input-wrapper">
         <input type="text" class="word-input" id="word-input" autocomplete="off">
       </div>
     </div>
-    
-    <!-- Кнопка под рамкой -->
     <img src="https://i.ibb.co/8gDS5Xdv/image.png" class="check-btn" id="check-btn" alt="Check">
   </div>
 </div>
