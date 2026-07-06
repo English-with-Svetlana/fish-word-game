@@ -16,13 +16,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center; }
 .modal-overlay.active { display: flex; }
 .modal-box { position: relative; width: 500px; height: 400px; background: url('https://i.ibb.co/C372spnj/image.png') no-repeat center center; background-size: contain; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.letter-container { position: relative; width: 300px; height: 100px; margin: 0 auto 10px; }
-.letter { position: absolute; font-size: 30px; font-weight: bold; color: #2c3e50; cursor: pointer; user-select: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+.letter-container { position: relative; width: 320px; height: 140px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+.word-image { max-width: 100%; max-height: 100%; object-fit: contain; }
 .input-area { position: relative; width: 300px; height: 50px; display: flex; align-items: center; justify-content: center; }
 .word-input { width: 260px; padding: 8px; font-size: 22px; text-align: center; border: 2px solid #d35400; border-radius: 8px; background: rgba(255, 248, 220, 0.9); outline: none; color: #2c3e50; font-family: Georgia, serif; position: absolute; }
 .word-input.success { background: rgba(46, 204, 113, 0.7); border-color: #27ae60; }
 .word-input.error { background: rgba(231, 76, 60, 0.7); border-color: #c0392b; }
-.check-btn { position: absolute; bottom: -50px; padding: 8px 25px; font-size: 18px; background: linear-gradient(135deg, #d35400, #e67e22); color: white; border: none; border-radius: 20px; cursor: pointer; font-family: Georgia, serif; font-weight: bold; }
+.check-btn { position: absolute; bottom: -55px; cursor: pointer; width: 120px; height: auto; transition: transform 0.2s; }
+.check-btn:hover { transform: scale(1.1); }
 .correct-word { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: bold; color: #27ae60; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; pointer-events: none; }
 .final-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #d35400; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; z-index: 100; animation: finalPulse 2s infinite; }
 @keyframes finalPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
@@ -38,7 +39,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
     <div class="letter-container" id="letter-container"></div>
     <div class="input-area">
       <input type="text" class="word-input" id="word-input" placeholder="Write the word..." autocomplete="off">
-      <button class="check-btn" id="check-btn">Check</button>
+      <img src="https://i.ibb.co/8gDS5Xdv/image.png" class="check-btn" id="check-btn" alt="Check">
     </div>
   </div>
 </div>
@@ -50,7 +51,22 @@ if (window.__fishGameStarted) {
 }
 window.__fishGameStarted = true;
 
-const words = ["ancient man", "gangster", "witch", "knight", "ghost", "amulet", "potion", "torch", "hang out", "terrify"];
+const words = ["ancient man", "witch", "gangster", "knight", "ghost", "terrify", "amulet", "torch", "hang out", "potion"];
+
+// ✅ КАРТИНКИ-РЫБКИ С БУКВАМИ ДЛЯ КАЖДОГО СЛОВА
+const wordImages = {
+  "ancient man": "https://i.ibb.co/pjBf3CZf/1.png",
+  "witch": "https://i.ibb.co/5XqNGKj0/2.png",
+  "gangster": "https://i.ibb.co/hJwGvy6h/3.png",
+  "knight": "https://i.ibb.co/YB8bynQg/4.png",
+  "ghost": "https://i.ibb.co/W43FxF4R/5.png",
+  "terrify": "https://i.ibb.co/Dfy30FCp/6.png",
+  "amulet": "https://i.ibb.co/sJ2ZhpPB/7.png",
+  "torch": "https://i.ibb.co/nqvXWNrt/8.png",
+  "hang out": "https://i.ibb.co/Cpyn4K1Y/9.png",
+  "potion": "https://i.ibb.co/hJ3X3MkM/10.png"
+};
+
 let audioCtx = null;
 
 function initAudio() {
@@ -164,37 +180,6 @@ function createFirework(x, y, count = 20) {
   setTimeout(() => fw.remove(), 1000);
 }
 
-function shuffleArray(array) {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
-}
-
-function placeLettersInGrid(letters) {
-  const positions = [];
-  const containerWidth = 300;
-  const containerHeight = 100;
-  const cols = Math.ceil(Math.sqrt(letters.length));
-  const rows = Math.ceil(letters.length / cols);
-  const cellWidth = containerWidth / cols;
-  const cellHeight = containerHeight / rows;
-  const startX = (containerWidth - (cols * cellWidth)) / 2;
-  const startY = (containerHeight - (rows * cellHeight)) / 2 + 10;
-  
-  letters.forEach((letter, index) => {
-    const row = Math.floor(index / cols);
-    const col = index % cols;
-    const x = startX + col * cellWidth + cellWidth/2 - 15 + (Math.random() * 10 - 5);
-    const y = startY + row * cellHeight + cellHeight/2 - 15 + (Math.random() * 10 - 5);
-    positions.push({ x: Math.max(5, Math.min(x, containerWidth - 35)), y: Math.max(5, Math.min(y, containerHeight - 35)) });
-  });
-  
-  return positions;
-}
-
 let fishElements = [];
 let currentFishIndex = -1;
 let fishRemaining = 10;
@@ -204,7 +189,6 @@ let isModalOpen = false;
 let gameFinished = false;
 const container = document.getElementById("game-container");
 
-// ✅ ПРЯМОУГОЛЬНЫЙ РАЗМЕР РЫБЫ: 180x120
 const FISH_WIDTH = 180;
 const FISH_HEIGHT = 120;
 
@@ -291,18 +275,12 @@ function showModal(index) {
   wordInput.style.display = "block";
   checkBtn.style.display = "block";
   
-  const letters = currentWord.split("");
-  const shuffledLetters = shuffleArray(letters);
-  const positions = placeLettersInGrid(shuffledLetters);
-  
-  shuffledLetters.forEach((letter, i) => {
-    const letterEl = document.createElement("div");
-    letterEl.className = "letter";
-    letterEl.textContent = letter === " " ? "_" : letter;
-    letterEl.style.left = positions[i].x + "px";
-    letterEl.style.top = positions[i].y + "px";
-    letterContainer.appendChild(letterEl);
-  });
+  // ✅ ПОКАЗЫВАЕМ КАРТИНКУ-РЫБКУ С БУКВАМИ
+  const wordImg = document.createElement("img");
+  wordImg.className = "word-image";
+  wordImg.src = wordImages[currentWord];
+  wordImg.alt = currentWord;
+  letterContainer.appendChild(wordImg);
   
   overlay.classList.add("active");
   setTimeout(() => wordInput.focus(), 100);
