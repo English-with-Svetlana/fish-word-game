@@ -148,6 +148,25 @@ if (window.__fishGameStarted) {
   fishElements = [];
 }
 window.__fishGameStarted = true;
+  // Предзагрузка всех картинок
+function preloadImages() {
+  const images = Object.values(wordImages);
+  let loaded = 0;
+  
+  images.forEach(src => {
+    const img = new Image();
+    img.onload = () => {
+      loaded++;
+      if (loaded === images.length) {
+        console.log('Все картинки загружены');
+      }
+    };
+    img.src = src;
+  });
+}
+
+// Вызови предзагрузку сразу
+preloadImages();
 
 const words = ["ancient man", "witch", "gangster", "knight", "ghost", "terrify", "amulet", "torch", "hang out", "potion"];
 
