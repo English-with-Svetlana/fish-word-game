@@ -1,0 +1,119 @@
+{
+  "frame": {
+    "origin": "https://i.ibb.co/C372spnj/image.png",
+    "source": "assets/source/frame.png",
+    "path": "assets/frame.06081a427f4d95b6.webp",
+    "originalBytes": 408053,
+    "optimizedBytes": 206968,
+    "width": 640,
+    "height": 320
+  },
+  "check": {
+    "origin": "https://i.ibb.co/8gDS5Xdv/image.png",
+    "source": "assets/source/check.png",
+    "path": "assets/check.9334a6c425cb5ec0.webp",
+    "originalBytes": 580553,
+    "optimizedBytes": 223508,
+    "width": 640,
+    "height": 640
+  },
+  "ancient-man": {
+    "origin": "https://i.ibb.co/XZv3vh97/1.png",
+    "source": "assets/source/ancient-man.png",
+    "path": "assets/ancient-man.15a25cb938522bad.webp",
+    "originalBytes": 367137,
+    "optimizedBytes": 190724,
+    "width": 640,
+    "height": 391
+  },
+  "witch": {
+    "origin": "https://i.ibb.co/MDVNwYtd/2.png",
+    "source": "assets/source/witch.png",
+    "path": "assets/witch.c41d94262ad7c9bb.webp",
+    "originalBytes": 370801,
+    "optimizedBytes": 189904,
+    "width": 640,
+    "height": 391
+  },
+  "gangster": {
+    "origin": "https://i.ibb.co/ns7Mpbc3/3.png",
+    "source": "assets/source/gangster.png",
+    "path": "assets/gangster.22e3608db83eed37.webp",
+    "originalBytes": 368967,
+    "optimizedBytes": 190922,
+    "width": 640,
+    "height": 391
+  },
+  "knight": {
+    "origin": "https://i.ibb.co/r2ZX243J/4.png",
+    "source": "assets/source/knight.png",
+    "path": "assets/knight.70efd6648ad51cfc.webp",
+    "originalBytes": 369167,
+    "optimizedBytes": 189290,
+    "width": 640,
+    "height": 391
+  },
+  "ghost": {
+    "origin": "https://i.ibb.co/7JdJyZqf/5.png",
+    "source": "assets/source/ghost.png",
+    "path": "assets/ghost.cc34002e3b63e483.webp",
+    "originalBytes": 370453,
+    "optimizedBytes": 190108,
+    "width": 640,
+    "height": 391
+  },
+  "terrify": {
+    "origin": "https://i.ibb.co/xKXvZR7F/6.png",
+    "source": "assets/source/terrify.png",
+    "path": "assets/terrify.c156c517b224b449.webp",
+    "originalBytes": 370554,
+    "optimizedBytes": 189948,
+    "width": 640,
+    "height": 391
+  },
+  "amulet": {
+    "origin": "https://i.ibb.co/84cn7wxK/7.png",
+    "source": "assets/source/amulet.png",
+    "path": "assets/amulet.3dbc8cca3049f835.webp",
+    "originalBytes": 368532,
+    "optimizedBytes": 188894,
+    "width": 640,
+    "height": 391
+  },
+  "torch": {
+    "origin": "https://i.ibb.co/BHRQmN0j/8.png",
+    "source": "assets/source/torch.png",
+    "path": "assets/torch.4f38fe5966e4f574.webp",
+    "originalBytes": 370011,
+    "optimizedBytes": 188870,
+    "width": 640,
+    "height": 391
+  },
+  "hang-out": {
+    "origin": "https://i.ibb.co/NdQ5LNDs/9.png",
+    "source": "assets/source/hang-out.png",
+    "path": "assets/hang-out.9259f8c4f817f2cd.webp",
+    "originalBytes": 368888,
+    "optimizedBytes": 190170,
+    "width": 640,
+    "height": 391
+  },
+  "potion": {
+    "origin": "https://i.ibb.co/JwmRq9Zw/10.png",
+    "source": "assets/source/potion.png",
+    "path": "assets/potion.7d1fbeea44bb72ed.webp",
+    "originalBytes": 369515,
+    "optimizedBytes": 188882,
+    "width": 640,
+    "height": 391
+  },
+  "fish": {
+    "origin": "https://i.ibb.co/LdPkRr0s/image.png",
+    "source": "assets/source/fish.png",
+    "path": "assets/fish.5eb61f2f43f24edf.webp",
+    "originalBytes": 374570,
+    "optimizedBytes": 191904,
+    "width": 640,
+    "height": 453
+  }
+}
